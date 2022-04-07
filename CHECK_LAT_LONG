@@ -1,0 +1,10 @@
+# Checking if the latitude/longitude are in the expected range
+SELECT MAX(start_lat) AS max_lat_start,
+MIN(start_lat) AS min_lat_start,
+MAX(end_lat) AS max_lat_end,
+MIN(end_lat) AS min_lat_end,
+MAX(start_lng) AS max_lng_start,
+MIN(start_lng) AS min_lng_start,
+MAX(end_lng) AS max_lng_end,
+MIN(end_lng) AS min_lng_end
+FROM bikesharing
