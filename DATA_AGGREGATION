@@ -1,0 +1,32 @@
+# Investigating the number of users by type
+SELECT COUNT(*), member_casual
+FROM bikesharing
+GROUP BY member_casual
+
+# Investigating the number of users by type of bike
+SELECT member_casual, rideable_type, COUNT(*) AS users
+FROM bikesharing
+GROUP BY rideable_type, member_casual
+
+# Investigating the number of users by month
+SELECT member_casual, EXTRACT(MONTH FROM started_at) AS month, COUNT(*)
+FROM bikesharing
+GROUP BY member_casual, month
+ORDER BY month ASC
+
+# Investigating the number of users by day of week
+SELECT member_casual, EXTRACT(DAYOFWEEK FROM started_at) AS weekday, COUNT(*)
+FROM bikesharing
+GROUP BY member_casual, weekday
+ORDER BY weekday ASC
+
+WITH ride_length AS(
+    SELECT (ended_at - started_at)
+)
+SELECT (
+    EXTRACT(HOUR from (ended_at - started_at))*60 + 
+    EXTRACT(MINUTES from (ended_at - started_at)) + 
+    EXTRACT(SECONDS from (ended_at - started_at))/60
+    ) AS ride_length_min
+FROM bikesharing
+LIMIT 100
