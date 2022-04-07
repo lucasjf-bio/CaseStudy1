@@ -20,13 +20,193 @@ FROM bikesharing
 GROUP BY member_casual, weekday
 ORDER BY weekday ASC
 
-WITH ride_length AS(
-    SELECT (ended_at - started_at)
-)
-SELECT (
-    EXTRACT(HOUR from (ended_at - started_at))*60 + 
-    EXTRACT(MINUTES from (ended_at - started_at)) + 
-    EXTRACT(SECONDS from (ended_at - started_at))/60
-    ) AS ride_length_min
+# Investigating the number of users by hour of day
+SELECT member_casual, EXTRACT(HOUR FROM started_at) AS hourofday, COUNT(*)
 FROM bikesharing
-LIMIT 100
+GROUP BY member_casual, hourofday
+ORDER BY hourofday ASC
+
+# Investigating the number of users by day of week and hour of day
+SELECT member_casual, EXTRACT(DAYOFWEEK FROM started_at) AS weekday, EXTRACT(HOUR FROM started_at) AS hourofday, COUNT(*)
+FROM bikesharing
+GROUP BY member_casual, weekday, hourofday
+ORDER BY weekday, hourofday ASC
+
+# Investigating the duration of rides
+ride_length AS (
+    SELECT ended_at, started_at,
+    (ended_at - started_at) AS ride_length_timestamp,
+        member_casual
+    FROM bikesharing
+    WHERE started_at < ended_at
+)
+
+SELECT AVG(
+    EXTRACT(HOUR from ride_length_timestamp)*60 + 
+    EXTRACT(MINUTE from ride_length_timestamp) + 
+    EXTRACT(SECOND from ride_length_timestamp)/60
+    ) AS ride_length_min,
+    member_casual
+FROM ride_length
+GROUP BY member_casual
+
+# Investigating the duration of rides by month
+ride_length AS (
+    SELECT ended_at, started_at,
+    (ended_at - started_at) AS ride_length_timestamp,
+        member_casual
+    FROM bikesharing
+    WHERE started_at < ended_at
+)
+
+SELECT member_casual, EXTRACT(MONTH from started_at) AS month,
+    AVG(
+    EXTRACT(HOUR from ride_length_timestamp)*60 + 
+    EXTRACT(MINUTE from ride_length_timestamp) + 
+    EXTRACT(SECOND from ride_length_timestamp)/60
+    ) AS ride_length_min
+FROM ride_length
+GROUP BY member_casual, month
+ORDER BY month ASC
+
+# Investigating the duration of rides byday of week
+ride_length AS (
+    SELECT ended_at, started_at,
+    (ended_at - started_at) AS ride_length_timestamp,
+        member_casual
+    FROM bikesharing
+    WHERE started_at < ended_at
+)
+
+SELECT member_casual, EXTRACT(DAYOFWEEK from started_at) AS weekday,
+    AVG(
+    EXTRACT(HOUR from ride_length_timestamp)*60 + 
+    EXTRACT(MINUTE from ride_length_timestamp) + 
+    EXTRACT(SECOND from ride_length_timestamp)/60
+    ) AS ride_length_min
+FROM ride_length
+GROUP BY member_casual, weekday
+ORDER BY weekday ASC
+
+# Investigating the duration of rides by time of day
+ride_length AS (
+    SELECT ended_at, started_at,
+    (ended_at - started_at) AS ride_length_timestamp,
+        member_casual
+    FROM bikesharing
+    WHERE started_at < ended_at
+)
+
+SELECT member_casual, EXTRACT(DAYOFWEEK from started_at) AS hourofday,
+    AVG(
+    EXTRACT(HOUR from ride_length_timestamp)*60 + 
+    EXTRACT(MINUTE from ride_length_timestamp) + 
+    EXTRACT(SECOND from ride_length_timestamp)/60
+    ) AS ride_length_min
+FROM ride_length
+GROUP BY member_casual, hourofday
+ORDER BY hourofday ASC
+
+# Investigating the duration of rides byday of time of day and day of week
+ride_length AS (
+    SELECT ended_at, started_at,
+    (ended_at - started_at) AS ride_length_timestamp,
+        member_casual
+    FROM bikesharing
+    WHERE started_at < ended_at
+)
+
+SELECT member_casual,
+    EXTRACT(DAYOFWEEK from started_at) AS weekday,
+    EXTRACT(HOUR from started_at) AS hourofday,
+    AVG(
+    EXTRACT(HOUR from ride_length_timestamp)*60 + 
+    EXTRACT(MINUTE from ride_length_timestamp) + 
+    EXTRACT(SECOND from ride_length_timestamp)/60
+    ) AS ride_length_min
+FROM ride_length
+GROUP BY member_casual, weekday, hourofday
+ORDER BY weekday, hourofday ASC
+
+# Investigating the total duration of rides by user by month
+ride_length AS (
+    SELECT ended_at, started_at,
+    (ended_at - started_at) AS ride_length_timestamp,
+        member_casual
+    FROM bikesharing
+    WHERE started_at < ended_at
+)
+
+SELECT member_casual,
+    EXTRACT(MONTH from started_at) AS month,
+    SUM(
+    EXTRACT(HOUR from ride_length_timestamp) + 
+    EXTRACT(MINUTE from ride_length_timestamp)/60+ 
+    EXTRACT(SECOND from ride_length_timestamp)/(60*60)
+    ) AS ride_length_hour
+FROM ride_length
+GROUP BY member_casual, month
+ORDER BY month ASC
+
+# Investigating the total duration of rides by weekday
+ride_length AS (
+    SELECT ended_at, started_at,
+    (ended_at - started_at) AS ride_length_timestamp,
+        member_casual
+    FROM bikesharing
+    WHERE started_at < ended_at
+)
+
+SELECT member_casual,
+    EXTRACT(DAYOFWEEK from started_at) AS weekday,
+    SUM(
+    EXTRACT(HOUR from ride_length_timestamp) + 
+    EXTRACT(MINUTE from ride_length_timestamp)/60+ 
+    EXTRACT(SECOND from ride_length_timestamp)/(60*60)
+    ) AS ride_length_hour
+FROM ride_length
+GROUP BY member_casual, weekday
+ORDER BY weekday ASC
+
+
+# Investigating the total duration of rides by hour
+ride_length AS (
+    SELECT ended_at, started_at,
+    (ended_at - started_at) AS ride_length_timestamp,
+        member_casual
+    FROM bikesharing
+    WHERE started_at < ended_at
+)
+
+SELECT member_casual,
+    EXTRACT(HOUR from started_at) AS hourofday,
+    SUM(
+    EXTRACT(HOUR from ride_length_timestamp) + 
+    EXTRACT(MINUTE from ride_length_timestamp)/60+ 
+    EXTRACT(SECOND from ride_length_timestamp)/(60*60)
+    ) AS ride_length_hour
+FROM ride_length
+GROUP BY member_casual, hourofday
+ORDER BY hourofday ASC
+
+
+# Investigating the total duration of rides by weekday and hour of day
+ride_length AS (
+    SELECT ended_at, started_at,
+    (ended_at - started_at) AS ride_length_timestamp,
+        member_casual
+    FROM bikesharing
+    WHERE started_at < ended_at
+)
+
+SELECT member_casual,
+    EXTRACT(DAYOFWEEK from started_at) AS weekday,
+    EXTRACT(HOUR from started_at) AS hourofday,
+    SUM(
+    EXTRACT(HOUR from ride_length_timestamp) + 
+    EXTRACT(MINUTE from ride_length_timestamp)/60+ 
+    EXTRACT(SECOND from ride_length_timestamp)/(60*60)
+    ) AS ride_length_hour
+FROM ride_length
+GROUP BY member_casual, weekday, hourofday
+ORDER BY weekday, hourofday ASC
