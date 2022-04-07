@@ -1,0 +1,5 @@
+# Identifying the usage of type of bike
+SELECT rideable_type AS bike_type,
+COUNT(ride_id) AS id_total
+FROM bikesharing
+GROUP BY bike_type
