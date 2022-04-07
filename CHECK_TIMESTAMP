@@ -4,3 +4,10 @@ MIN(LENGTH(CAST(started_at AS string))) AS min_start_len,
 MAX(LENGTH(CAST(ended_at AS string))) AS max_end_len,
 MIN(LENGTH(CAST(ended_at AS string))) AS min_end_len
 FROM bikesharing
+
+# Checking if the dates are in the expected range
+SELECT MAX(started_at) AS max_start,
+MIN(started_at) AS min_start,
+MAX(ended_at) AS max_end,
+MIN(ended_at) AS min_end
+FROM bikesharing
