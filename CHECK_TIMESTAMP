@@ -11,3 +11,8 @@ MIN(started_at) AS min_start,
 MAX(ended_at) AS max_end,
 MIN(ended_at) AS min_end
 FROM bikesharing
+
+# Investigating if the started_at > ended_at
+SELECT *
+FROM bikesharing
+WHERE started_at > ended_at
