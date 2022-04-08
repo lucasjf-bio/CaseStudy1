@@ -34,6 +34,11 @@ SELECT start_station_name, start_lat, start_lng
 FROM bikesharing
 WHERE member_casual = "casual" AND (EXTRACT(DAYOFWEEK FROM started_at) = 1 OR EXTRACT(DAYOFWEEK FROM started_at) = 7)
 
+# Identifying the start/end stations for member/casual riders on all days
+SELECT start_station_name, start_lat, start_lng, end_station_name, end_lat, end_lng
+FROM bikesharing
+WHERE member_casual = "member"
+
 # Identifying the most used start station by member riders (all days)
 SELECT start_station_name, start_lat, start_lng, COUNT(*) AS number_of_rides
 FROM bikesharing
