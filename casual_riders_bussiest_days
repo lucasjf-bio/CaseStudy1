@@ -1,0 +1,8 @@
+# Investigating the days with the largest number of rides for casual riders
+SELECT EXTRACT(DATE FROM started_at) AS date_of_ride,
+COUNT(*) AS number_of_rides
+FROM bikesharing
+WHERE member_casual = "casual"
+GROUP BY date_of_ride
+ORDER BY number_of_rides DESC
+LIMIT 20
