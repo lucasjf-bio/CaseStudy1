@@ -1,0 +1,35 @@
+# Identifying the most used start stations by casual riders on weekends
+SELECT start_station_name, start_lat, start_lng, COUNT(*) AS number_of_rides
+FROM bikesharing
+WHERE member_casual = "casual" AND (EXTRACT(DAYOFWEEK FROM started_at) = 1 OR EXTRACT(DAYOFWEEK FROM started_at) = 7)
+GROUP BY start_station_name, start_lat, start_lng
+ORDER BY number_of_rides DESC
+
+# Identifying the most used start station by casual rides (all days)
+SELECT start_station_name, start_lat, start_lng, COUNT(*) AS number_of_rides
+FROM bikesharing
+WHERE member_casual = "casual"
+GROUP BY start_station_name, start_lat, start_lng
+ORDER BY number_of_rides DESC
+LIMIT 20
+
+# Identifying the most used end station by casual rides (all days)
+SELECT end_station_name, end_lat, end_lng, COUNT(*) AS number_of_rides
+FROM bikesharing
+WHERE member_casual = "casual"
+GROUP BY end_station_name, end_lat, end_lng
+ORDER BY number_of_rides DESC
+LIMIT 20
+
+# Identifying the most used end station by casual rides on weekends
+SELECT end_station_name, end_lat, end_lng, COUNT(*) AS number_of_rides
+FROM bikesharing
+WHERE member_casual = "casual" AND (EXTRACT(DAYOFWEEK FROM started_at) = 1 OR EXTRACT(DAYOFWEEK FROM started_at) = 7)
+GROUP BY end_station_name, end_lat, end_lng
+ORDER BY number_of_rides DESC
+LIMIT 20
+
+# Identifying the start stations for casual riders on weekends
+SELECT start_station_name, start_lat, start_lng
+FROM bikesharing
+WHERE member_casual = "casual" AND (EXTRACT(DAYOFWEEK FROM started_at) = 1 OR EXTRACT(DAYOFWEEK FROM started_at) = 7)
