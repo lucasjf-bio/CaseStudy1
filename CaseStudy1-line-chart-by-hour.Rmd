@@ -1,0 +1,96 @@
+---
+title: "Line_Chart_by_Hour"
+author: "Lucas"
+date: '2022-04-08'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## This code aims to generate plots for the Case Study 1 (Cyclist data)
+
+Importing and loading important packages
+
+```{r}
+install.packages("tidyverse")
+library(tidyverse)
+library(ggplot2)
+```
+
+### Importing the files that show the aggregated data with average duration of rides by both weekday and hour of the day
+
+```{r}
+avg_duration_min <- read_csv("/cloud/project/AvgDurationByUser-Weekday-Hour.csv")
+```
+
+### Visualizing the file
+
+```{r}
+glimpse(avg_duration_min)
+```
+
+### Obtaining the name of the columns
+
+```{r}
+colnames(avg_duration_min)
+```
+
+### Plotting the data into line charts by hour of the day
+
+It is necessary to reorder the "weekday" column, so they can appear in the correct day order
+
+```{r}
+avg_duration_min2 <- avg_duration_min
+avg_duration_min2$weekday <- factor(avg_duration_min2$weekday, levels = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+avg_plot <- ggplot(data=avg_duration_min2, aes(y=avg_ride_duration_min, x=hourofday)) +
+  geom_line(aes(color=member_casual)) + scale_color_hue(name = "Type of user") +
+  facet_wrap(~weekday) +
+  labs(x = "Hour of the day (24h format)", y = "Average ride duration (min)",
+       title = "AVERAGE RIDE DURATION", 
+       subtitle = "Data aggregated by weekday, hour of the day, and type of user") +
+  theme(legend.position=c(0.45, 0.15))
+  
+
+avg_plot
+```
+
+## Import the file that contains the aggregated data with the total hours spend by casual or member riders by weekday and by hour of the day
+
+```{r}
+total_duration_hour <- read_csv("/cloud/project/TotalByUser-Weekday-Hour.csv")
+```
+
+## Checking the file:
+
+```{r}
+glimpse(total_duration_hour)
+```
+
+## Checking the name of the columns
+
+```{r}
+colnames(total_duration_hour)
+```
+
+### Plotting the data into line charts by hour of the day
+
+It is necessary to reorder the "weekday" column, so they can appear in the correct day order
+
+```{r}
+total_duration_hour2 <- total_duration_hour
+total_duration_hour2$weekday <- factor(total_duration_hour2$weekday, levels = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+total_plot <- ggplot(data=total_duration_hour2, aes(y=ride_duration_hour, x=hourofday)) +
+  geom_line(aes(color=member_casual)) + scale_color_hue(name = "Type of user") +
+  facet_wrap(~weekday) +
+  labs(x = "Hour of the day (24h format)", y = "Total ride duration (h)",
+       title = "TOTAL RIDE DURATION", 
+       subtitle = "Data aggregated by weekday, hour of the day, and type of user") +
+  theme(legend.position=c(0.45, 0.15))
+  
+
+total_plot
+```
